@@ -1,0 +1,27 @@
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\obj\Debug\BugRobot.Lib.csprojResolveAssemblyReference.cache
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\BugRobot.Lib.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\BugRobot.Lib.pdb
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.Client.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Client.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.DeleteTeamProject.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.Common.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.Diff.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Common.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Proxy.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Client.xml
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.DeleteTeamProject.xml
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.Common.xml
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.Diff.xml
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.WITDataStore.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\obj\Debug\BugRobot.Lib.dll
+c:\users\diego_silveira\documents\visual studio 2015\Projects\BugRobot\BugRobot.Lib\obj\Debug\BugRobot.Lib.pdb
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Debug\BugRobot.Lib.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Debug\BugRobot.Lib.pdb
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Debug\Microsoft.WITDataStore.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\obj\Debug\BugRobot.Lib.csprojResolveAssemblyReference.cache
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\obj\Debug\BugRobot.Lib.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\obj\Debug\BugRobot.Lib.pdb
