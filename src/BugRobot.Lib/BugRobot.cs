@@ -14,8 +14,9 @@ namespace BugRobot.Lib
         public string QueryName { get; set; }
         public string UserName { get; set; }
         public bool AutoAssign { get; set; }
+        public bool NotifyOnlyNewBugs { get; set; }
 
-        public BugRobot(string queryUrl, string userName, bool autoAssign)
+        public BugRobot(string queryUrl, string userName, bool autoAssign, bool notifyOnlyNewBugs)
         {
             this.QueryURL = queryUrl;
 
@@ -35,10 +36,14 @@ namespace BugRobot.Lib
             this.QueryName = queryName;
             this.UserName = userName;
             this.AutoAssign = autoAssign;
+            this.NotifyOnlyNewBugs = notifyOnlyNewBugs;
         }
 
         public Message Run()
         {
+            var hasBugIcon = "Content/bug_error.png";
+            var hasNoBugIcon = "Content/bug_ok.png";
+
             Message message;
 
             var bugs = this.TfsManager.GetUnassignedBugs(this.QueryName);
@@ -51,18 +56,18 @@ namespace BugRobot.Lib
                 {
                     var success = this.TfsManager.AssignWorkItem(firstBug, this.UserName);
 
-                    message = success ? new Message() { Title = firstBug.Title, Url = this.TfsManager.GetWorkItemUrl(firstBug), Success = true }
-                                      : new Message() { Title = "Error on assigning bug", Success = false };
+                    message = success ? new Message() { Title = string.Format("Novo bug em aberto:\n\n{0}\n{1}", firstBug.Id, firstBug.Title), Url = this.TfsManager.GetWorkItemUrl(firstBug), Success = true, Icon = hasBugIcon }
+                                      : new Message() { Title = "Ocorreu um erro ao atribuir o bug ao desenvolvedor", Success = true, Icon = hasBugIcon };
                 }
                 else
                 {
-                    message = bugs.Count() == 1 ? new Message() { Title = firstBug.Title, Url = this.TfsManager.GetWorkItemUrl(firstBug), Success = true }
-                                                : new Message() { Title = string.Format("{0} New bugs available", bugs.Count()), Url = this.QueryURL, Success = false };
+                    message = bugs.Count() == 1 ? new Message() { Title = string.Format("Novo bug em aberto:\n\n{0}\n{1}", firstBug.Id, firstBug.Title), Url = this.TfsManager.GetWorkItemUrl(firstBug), Success = true, Icon = hasBugIcon }
+                                                : new Message() { Title = string.Format("{0} novos bugs em aberto:\n\n{1}", bugs.Count(), string.Join("\n", bugs.Select(s => s.Id))), Url = this.QueryURL, Success = true, Icon = hasBugIcon };
                 }
             }
             else
             {
-                message = new Message() { Title = "No bugs available", Success = false };
+                message = new Message() { Title = "Nenhum bug em aberto", Success = !this.NotifyOnlyNewBugs, Icon = hasNoBugIcon };
             }
 
             return message;
@@ -73,6 +78,7 @@ namespace BugRobot.Lib
             public string Title { get; set; }
             public string Url { get; set; }
             public bool Success { get; set; }
+            public string Icon { get; set; }
         }
     }
 

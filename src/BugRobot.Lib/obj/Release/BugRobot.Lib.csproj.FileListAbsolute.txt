@@ -18,3 +18,10 @@ C:\Users\diego_silveira\Documents\Visual Studio 2015\Projects\BugRobot\BugRobot.
 C:\Users\diego_silveira\Documents\Visual Studio 2015\Projects\BugRobot\BugRobot.Lib\obj\Release\BugRobot.Lib.csprojResolveAssemblyReference.cache
 C:\Users\diego_silveira\Documents\Visual Studio 2015\Projects\BugRobot\BugRobot.Lib\obj\Release\BugRobot.Lib.dll
 C:\Users\diego_silveira\Documents\Visual Studio 2015\Projects\BugRobot\BugRobot.Lib\obj\Release\BugRobot.Lib.pdb
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Release\BugRobot.Lib.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Release\BugRobot.Lib.pdb
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Release\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\bin\Release\Microsoft.WITDataStore.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\obj\Release\BugRobot.Lib.csprojResolveAssemblyReference.cache
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\obj\Release\BugRobot.Lib.dll
+D:\Projetos\Sustentacao\BugRobot\BugRobot.Lib\obj\Release\BugRobot.Lib.pdb

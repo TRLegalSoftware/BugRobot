@@ -11,13 +11,16 @@ namespace BugRobot.Web.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.URL = @"http://plk-tfs2013/tfs/Fabrica_Collection/Fabrica/_workitems#path=Shared+Queries%2FSustenta%C3%A7%C3%A3o+LegalOne%2FRobo+-+Sustenta%C3%A7%C3%A3o+-+Bugs+de+clientes&_a=query&fullScreen=false";
+            ViewBag.Interval = "5";
+
             return View();
         }
 
         [HttpGet]
-        public JsonResult GetBugsFromTFS(string queryUrl, string userName, bool autoAssign)
+        public JsonResult GetBugsFromTFS(string queryUrl, string userName, bool autoAssign, bool notifyOnlyNewBugs)
         {
-            var bugRobot = new BugRobot.Lib.BugRobot(queryUrl, userName, autoAssign);
+            var bugRobot = new BugRobot.Lib.BugRobot(queryUrl, userName, autoAssign, notifyOnlyNewBugs);
 
             var result = bugRobot.Run();
 
