@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "BugRobot v0.1";
 }
 
@@ -35,13 +35,22 @@
         <span class="help-block">Check it if you want the system to only show notifications when new bug unassigned arise.</span>
     </div>
 
+    <div class="form-group">
+        <input type="checkbox" id="NotifyOnlyOnceSameBug" name="NotifyOnlyOnceSameBug" />
+        <label for="NotifyOnlyOnceSameBug" class="large">Notify once same unassigned bug</label>
+        <span class="help-block">If a bug was notified, it won't notified again.</span>
+    </div>
+
     <input id="btn-init-robot" type="submit" value="Start Robot" class="btn btn-default" />
 </fieldset>
 
 <fieldset id="robot-stats" class="robot-stats">
     <legend>Running BugRobot...</legend>
     <div id="robot-stats-log" class="robot-stats-log"></div>
+    <div id="robot-stats-log-hidden" class="robot-stats-log" hidden></div>
 </fieldset>
+
+<input type="hidden" id="AlreadyNotified" />
 
 
 @section Scripts {
@@ -60,6 +69,7 @@
             var $btnStart = $("#btn-init-robot");
             var $stats = $("#robot-stats");
             var $log = $("#robot-stats-log");
+            var $logHidden = $("#robot-stats-log-hidden");
             var $inputs = $(".form-group input");
 
             var $queryUrl = $("#QueryUrl");
@@ -67,6 +77,9 @@
             var $interval = $("#Interval");
             var $autoAssign = $("#AutoAssign")[0];
             var $notifyOnlyNewBugs = $("#NotifyOnlyNewBug")[0];
+            var $notifyOnlyOnceSameBug = $("#NotifyOnlyOnceSameBug")[0];
+
+            var $alreadyNotified = $("#AlreadyNotified");
 
             // Start button event changes dependending on its state
             $btnStart.on("click", function () {
@@ -135,7 +148,7 @@
                 $.ajax({
                     url: "/Bot/GetBugsFromTFS",
                     method: "GET",
-                    data: { queryUrl: $queryUrl.val(), userName: $userName.val(), autoAssign: $autoAssign.checked, notifyOnlyNewBugs: $notifyOnlyNewBugs.checked },
+                    data: { queryUrl: $queryUrl.val(), userName: $userName.val(), autoAssign: $autoAssign.checked, notifyOnlyNewBugs: $notifyOnlyNewBugs.checked, notifiedBugs: $notifyOnlyOnceSameBug.checked ? $alreadyNotified.val() : "" },
                     dataType: 'json',
                     contentType: "application/json",
                     success: function (data) {
@@ -143,6 +156,21 @@
 
                         // If success send notification to the browser
                         if (data.Success) {
+                            if ($notifyOnlyOnceSameBug.checked) {
+                                if ($alreadyNotified.val() == "")
+                                    $alreadyNotified.val(data.Ids);
+                                else {
+                                    var new_ids = data.Ids.split(",");
+                                    var old_ids = $alreadyNotified.val().split(",");
+
+                                    new_ids.forEach(function (element, index, array) {
+                                        //If was already notified, does not notified again
+                                        if (old_ids.indexOf(element) == -1)
+                                            $alreadyNotified.val() += "," + element;
+                                    });
+                                }
+                            }                            
+
                             var notification = new Notification("LegalOne Application Maintenance", { body: data.Title, tag: "bugRobot", icon: data.Icon });
 
                             if (data.Url) {
@@ -150,6 +178,8 @@
                                     window.location.href = data.Url;
                                 }
                             }
+
+                            
 
                             // After finding a available bug, stops the robot
                             //stopRobot();
@@ -199,5 +229,3 @@
 
     </script>
 }
-
-
