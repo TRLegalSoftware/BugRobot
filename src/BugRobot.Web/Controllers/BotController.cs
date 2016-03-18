@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,9 +18,9 @@ namespace BugRobot.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetBugsFromTFS(string queryUrl, string userName, bool autoAssign, bool notifyOnlyNewBugs)
+        public JsonResult GetBugsFromTFS(string queryUrl, string userName, bool autoAssign, bool notifyOnlyNewBugs, string notifiedBugs)
         {
-            var bugRobot = new BugRobot.Lib.BugRobot(queryUrl, userName, autoAssign, notifyOnlyNewBugs);
+            var bugRobot = new BugRobot.Lib.BugRobot(queryUrl, userName, autoAssign, notifyOnlyNewBugs, notifiedBugs);
 
             var result = bugRobot.Run();
 
