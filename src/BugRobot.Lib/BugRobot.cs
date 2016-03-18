@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,8 +16,9 @@ namespace BugRobot.Lib
         public string UserName { get; set; }
         public bool AutoAssign { get; set; }
         public bool NotifyOnlyNewBugs { get; set; }
+        public string NotifiedBugs { get; set; }
 
-        public BugRobot(string queryUrl, string userName, bool autoAssign, bool notifyOnlyNewBugs)
+        public BugRobot(string queryUrl, string userName, bool autoAssign, bool notifyOnlyNewBugs, string notifiedBugs)
         {
             this.QueryURL = queryUrl;
 
@@ -37,6 +39,7 @@ namespace BugRobot.Lib
             this.UserName = userName;
             this.AutoAssign = autoAssign;
             this.NotifyOnlyNewBugs = notifyOnlyNewBugs;
+            this.NotifiedBugs = notifiedBugs;
         }
 
         public Message Run()
@@ -48,9 +51,15 @@ namespace BugRobot.Lib
 
             var bugs = this.TfsManager.GetUnassignedBugs(this.QueryName);
 
-            if(bugs.Count() > 0)
+            var notifiedBugs = (!string.IsNullOrEmpty(this.NotifiedBugs)) 
+                                ? this.NotifiedBugs.Split(',').Select(id => Convert.ToInt32(id)).ToList()
+                                : new List<Int32>();
+
+            var filteredBugs = bugs.Where(x => !notifiedBugs.Contains(x.Id));
+
+            if (filteredBugs.Count() > 0)
             {
-                var firstBug = bugs.FirstOrDefault();
+                var firstBug = filteredBugs.FirstOrDefault();
 
                 if (this.AutoAssign)
                 {
@@ -61,13 +70,20 @@ namespace BugRobot.Lib
                 }
                 else
                 {
-                    message = bugs.Count() == 1 ? new Message() { Title = string.Format("Novo bug em aberto:\n\n{0}\n{1}", firstBug.Id, firstBug.Title), Url = this.TfsManager.GetWorkItemUrl(firstBug), Success = true, Icon = hasBugIcon }
-                                                : new Message() { Title = string.Format("{0} novos bugs em aberto:\n\n{1}", bugs.Count(), string.Join("\n", bugs.Select(s => s.Id))), Url = this.QueryURL, Success = true, Icon = hasBugIcon };
+                    message = filteredBugs.Count() == 1 ? new Message() { Title = string.Format("Novo bug em aberto:\n\n{0}\n{1}", firstBug.Id, firstBug.Title), Url = this.TfsManager.GetWorkItemUrl(firstBug), Success = true, Icon = hasBugIcon }
+                                                : new Message() { Title = string.Format("{0} novos bugs em aberto:\n\n{1}", filteredBugs.Count(), string.Join("\n", filteredBugs.Select(s => s.Id))), Url = this.QueryURL, Success = true, Icon = hasBugIcon };
+
                 }
+
+                foreach (var item in filteredBugs.Select(i => i.Id).ToList())	            
+                    message.Ids += string.IsNullOrEmpty(message.Ids) ? item.ToString() : string.Concat(",", item.ToString());
             }
             else
             {
-                message = new Message() { Title = "Nenhum bug em aberto", Success = !this.NotifyOnlyNewBugs, Icon = hasNoBugIcon };
+                if (bugs.Count() > 0)
+                    message = new Message() { Title = "Bugs já avisados", Success = !this.NotifyOnlyNewBugs, Icon = hasNoBugIcon };
+                else
+                    message = new Message() { Title = "Nenhum bug em aberto", Success = !this.NotifyOnlyNewBugs, Icon = hasNoBugIcon };
             }
 
             return message;
@@ -79,6 +95,7 @@ namespace BugRobot.Lib
             public string Url { get; set; }
             public bool Success { get; set; }
             public string Icon { get; set; }
+            public string Ids { get; set; }
         }
     }
 
