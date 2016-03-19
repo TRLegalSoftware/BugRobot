@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugRobot.Web", "BugRobot.Web\BugRobot.Web.csproj", "{0EBFAD31-2F3F-4117-AB17-0AA4FB97F429}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugRobot.Lib", "BugRobot.Lib\BugRobot.Lib.csproj", "{709DA58B-A7AD-4711-A6A2-4B17F3A60531}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugRobot.WPF", "BugRobot.WPF\BugRobot.WPF.csproj", "{3B30BFC2-56AF-46C9-BAC1-AB9BECB043A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{709DA58B-A7AD-4711-A6A2-4B17F3A60531}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{709DA58B-A7AD-4711-A6A2-4B17F3A60531}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{709DA58B-A7AD-4711-A6A2-4B17F3A60531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B30BFC2-56AF-46C9-BAC1-AB9BECB043A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B30BFC2-56AF-46C9-BAC1-AB9BECB043A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B30BFC2-56AF-46C9-BAC1-AB9BECB043A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B30BFC2-56AF-46C9-BAC1-AB9BECB043A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
