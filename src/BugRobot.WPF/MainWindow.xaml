@@ -1,8 +1,42 @@
 ﻿<Window x:Class="BugRobot.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="BugRobot" Height="350" Width="525">
+    <StackPanel Margin="10">
+        <StackPanel Orientation="Vertical">
+            <Label Content="Query URL:"></Label>
+            <TextBox x:Name="query" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" Height="25">
+
+            </TextBox>
+            <TextBlock Text="Url of the query that will be listened for new bugs."></TextBlock>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+            <Label Content="Username:"></Label>
+            <TextBox x:Name="username" MinWidth="200" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
+            <TextBlock Text="Name of the user to assign a new bug automaticaly (optional)." ></TextBlock>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+            <Label Content="Interval:"></Label>
+            <TextBox x:Name="interval" Text="5" MinWidth="90" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
+            <TextBlock Text="Interval in minutes to check for new bugs." ></TextBlock>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+            <CheckBox x:Name="autoAssign" Content="Auto Assign" ></CheckBox>
+            <TextBlock Text="Check it if you want the system to automaticaly assign a new bug to the user specified" ></TextBlock>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+            <CheckBox x:Name="unassigned" Content="Notify me only unassigned bugs" ></CheckBox>
+            <TextBlock Text="Check it if you want the system to only show notifications when new bug unassigned arise" ></TextBlock>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Run Bot" MinWidth="90" Click="Roda_bot"></Button>
+            <TextBlock x:Name="state" Text="Not running" Margin="10 0 0 0"></TextBlock>
+        </StackPanel>
+
+    </StackPanel>
 </Window>
