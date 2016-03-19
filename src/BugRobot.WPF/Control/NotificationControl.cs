@@ -11,6 +11,9 @@ namespace BugRobot.WPF.Control
     public class NotificationControl
     {
         private NotifyIcon notificationSystem;
+
+        //Creates a url out of the scope to use between methods
+        private String url;
         public NotificationControl()
         {
             this.notificationSystem = new NotifyIcon();
@@ -36,15 +39,16 @@ namespace BugRobot.WPF.Control
             this.notificationSystem.BalloonTipTitle = title;
             this.notificationSystem.BalloonTipText = text;
 
-            //Click on baloon to redirect(work in progress)
-            //this.notificationSystem.BalloonTipClicked += new System.EventHandler(redirectToLink(url));                
+            this.url = url;
+            if(url.Length>3)
+            this.notificationSystem.BalloonTipClicked += new EventHandler(redirectToLink);              
         }
 
-        private EventHandler redirectToLink(string url)
+        private void redirectToLink(object sender, EventArgs e)
         {
             try
             {
-                System.Diagnostics.Process.Start(url);
+                System.Diagnostics.Process.Start(this.url);
             }
             catch(System.ComponentModel.Win32Exception ex)
             {
@@ -55,8 +59,6 @@ namespace BugRobot.WPF.Control
             {
                 MessageBox.Show(other.Message);
             }
-
-            return null;
         }
 
     

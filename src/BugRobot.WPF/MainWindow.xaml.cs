@@ -38,8 +38,8 @@ namespace BugRobot.WPF
         }
 
         private void RunBotButton(object sender, RoutedEventArgs e)
-        {
-            Only starts if its not running
+        { 
+            //Only starts if its not running
             if (state.Text.Equals("Not running"))
             {
                 startBot();
