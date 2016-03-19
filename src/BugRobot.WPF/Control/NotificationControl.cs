@@ -12,6 +12,7 @@ namespace BugRobot.WPF.Control
         private NotifyIcon notificationSystem;
         public NotificationControl()
         {
+            this.notificationSystem = new NotifyIcon();
             this.notificationSystem.Icon = System.Drawing.SystemIcons.Warning;
             this.notificationSystem.Visible = true;
         }
