@@ -22,6 +22,7 @@ namespace BugRobot.WPF
     public partial class MainWindow : Window
     {
         private Timer timer;
+        private List<BugRobot.Lib.BugLog> bLogs = new List<BugRobot.Lib.BugLog>();
         public MainWindow()
         {
             InitializeComponent();
@@ -32,16 +33,13 @@ namespace BugRobot.WPF
             //Set a default time interval
             interval.Text = "5";
 
-            //Setup the timer
-            timer = new Timer();
-            timer.AutoReset = true;
-            timer.Elapsed += runEachTime;
+            bugLogs.ItemsSource = bLogs;            
             
         }
 
         private void RunBotButton(object sender, RoutedEventArgs e)
         {
-            //Only starts if its not running
+            Only starts if its not running
             if (state.Text.Equals("Not running"))
             {
                 startBot();
@@ -58,36 +56,49 @@ namespace BugRobot.WPF
             //Change the state to starting
             state.Text = "Starting...";
             startButton.Content = "Stop bot";
-
-
-            new Control.NotificationControl().callNotification("Testee", "Test");
+            
             //Setup the timer and starts it, calling the "runEachTime" function
+            timer = new Timer();
             timer.Interval = TimeSpan.FromSeconds(Int32.Parse(interval.Text)).TotalMilliseconds;
+            timer.AutoReset = true;
+            timer.Elapsed += runEachTime;
             timer.Enabled = true;
             timer.Start();
+            state.Text = "Running";
+            //Call it the first time
+            getBugsFromTFS();
 
         }
 
         private void stopBot()
         {
-            state.Text = "Not running";
-            startButton.Content = "Run bot";
+            //Stops the timer and then changes the state text
             timer.Stop();
             timer.Enabled = false;
-
+            state.Text = "Not running";
+            startButton.Content = "Run bot";
         }
 
         private void runEachTime(object sender, EventArgs e)
         {
-            new Control.NotificationControl().callNotification("Testee", "Test");
-            //getBugsFromTFS();
+            //Call the actual get bugs functions
+            //This run each time is only used for timing purposes
+            getBugsFromTFS();
         }
 
         private void getBugsFromTFS()
         {
+            //Get the robot
             var bugRobot = new BugRobot.Lib.BugRobot(query.Text, username.Text, autoAssign.IsChecked.Value, onlyUnassignedBugs.IsChecked.Value, "");
 
+            //Run it
             BugRobot.Lib.BugRobot.Message result = bugRobot.Run();
+
+            //If there's something
+            if (result.Success) { 
+                new Control.NotificationControl(result.Icon).callNotification("Bug " + result.Ids, result.Title, result.Url);
+                bLogs.Add(new BugRobot.Lib.BugLog() { Hour = DateTime.Now.ToString("HH:mm:ss"),  Id=result.Ids, Title = result.Title});
+            }
             
         }
     }

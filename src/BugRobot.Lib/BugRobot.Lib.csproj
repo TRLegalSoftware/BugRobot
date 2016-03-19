@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BugLog.cs" />
     <Compile Include="BugRobot.cs" />
     <Compile Include="TFSManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

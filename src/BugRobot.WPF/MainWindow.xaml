@@ -39,12 +39,12 @@
         </StackPanel>
         
         <StackPanel>
-            <ListView MinHeight="300">
+            <ListView MinHeight="300" Name="bugLogs">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Hora" Width="60" DisplayMemberBinding="{Binding Hora}" />
-                        <GridViewColumn Header="Titulo" Width="200" DisplayMemberBinding="{Binding Titulo}" />
-                        <GridViewColumn Header="Descrição" Width="231" DisplayMemberBinding="{Binding Descricao}" />
+                        <GridViewColumn Header="Hora" Width="60" DisplayMemberBinding="{Binding Hour}" />
+                        <GridViewColumn Header="ID" Width="100" DisplayMemberBinding="{Binding Id}" />
+                        <GridViewColumn Header="titulo" Width="331" DisplayMemberBinding="{Binding Title}" />
                     </GridView>
                 </ListView.View>
             </ListView>
