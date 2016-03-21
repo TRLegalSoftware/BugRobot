@@ -1,10 +1,10 @@
 ﻿<Window x:Class="BugRobot.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="BugRobot" Height="752" Width="525">
+        Title="BugRobot" Height="670" Width="525">
     <StackPanel Margin="10">
         <StackPanel Orientation="Vertical" Margin="5">
-            <Label Content="Query URL:"></Label>
+            <Label Content="*Query URL:"></Label>
             <TextBox x:Name="query" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" Height="25">
 
             </TextBox>
@@ -20,7 +20,7 @@
         <StackPanel Orientation="Vertical" Margin="5">
             <Label Content="Interval:"></Label>
             <TextBox x:Name="interval" Text="" MinWidth="90" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
-            <TextBlock Text="Interval in minutes to check for new bugs." ></TextBlock>
+            <TextBlock Text="Interval in seconds to check for new bugs." ></TextBlock>
         </StackPanel>
 
         <StackPanel Orientation="Vertical" Margin="5">
@@ -33,23 +33,30 @@
             <TextBlock Text="Check it if you want the system to only show notifications when new bug unassigned arise" ></TextBlock>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Margin="0 10">
-            <Button x:Name="startButton" Content="Run Bot" MinWidth="90" Click="RunBotButton"></Button>
-            <TextBlock x:Name="state" Text="Not running" Margin="10 0 0 0"/>
+        <StackPanel Orientation="Vertical" Margin="5">
+            <CheckBox x:Name="runOnce" Content="Run once" ></CheckBox>
+            <TextBlock Text="Runs the bot only one time and doesn't start the timer based on the interval" ></TextBlock>
         </StackPanel>
-        
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 10">
+            <Button x:Name="startButton" Content="Run Bot" MinWidth="90" Click="RunBotButton"/>
+            <TextBlock x:Name="state" Text="Not running" Margin="10 0 0 0" VerticalAlignment="Center"/>
+            <TextBlock Text="State:" Margin="10 0 0 0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="stateGetBugsFromTFS" Text="Stopped" Margin="10 0 0 0" VerticalAlignment="Center"/>
+        </StackPanel>
+
         <StackPanel>
-            <ListView MinHeight="300" Name="bugLogs">
+            <ListView MinHeight="60" Name="bugLogs" Height="212">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Hora" Width="60" DisplayMemberBinding="{Binding Hour}" />
+                        <GridViewColumn Header="Hour" Width="60" DisplayMemberBinding="{Binding Hour}" />
                         <GridViewColumn Header="ID" Width="100" DisplayMemberBinding="{Binding Id}" />
-                        <GridViewColumn Header="titulo" Width="331" DisplayMemberBinding="{Binding Title}" />
+                        <GridViewColumn Header="Title" Width="331" DisplayMemberBinding="{Binding Title}" />
                     </GridView>
                 </ListView.View>
             </ListView>
         </StackPanel>
-        
+
 
     </StackPanel>
 </Window>

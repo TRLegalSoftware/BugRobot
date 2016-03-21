@@ -47,18 +47,26 @@ namespace BugRobot.Lib
         {
             var collectionUri = new Uri(CollectionUrl);
             var server = new TfsTeamProjectCollection(collectionUri);
-            var workItemStore = server.GetService<WorkItemStore>();
 
-            var teamProject = workItemStore.Projects[ProjectName];
+            try
+            {
+                var workItemStore = server.GetService<WorkItemStore>();
+                var teamProject = workItemStore.Projects[ProjectName];
 
-            var x = teamProject.QueryHierarchy;
-            var queryId = FindQuery(x, queryName);
+                var x = teamProject.QueryHierarchy;
+                var queryId = FindQuery(x, queryName);
 
-            var queryDefinition = workItemStore.GetQueryDefinition(queryId);
+                var queryDefinition = workItemStore.GetQueryDefinition(queryId);
 
-            var result = workItemStore.Query(queryDefinition.QueryText, variables);
+                var result = workItemStore.Query(queryDefinition.QueryText, variables);
 
-            return result;
+                return result;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw ex;
+            }
+
         }
 
         public IEnumerable<WorkItem> GetUnassignedBugs(string queryName)
