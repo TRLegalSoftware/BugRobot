@@ -57,3 +57,8 @@ C:\Users\u6038117\Documents\BugRobot-master\src\BugRobot.Lib\bin\Debug\Microsoft
 C:\Users\u6038117\Documents\BugRobot-master\src\BugRobot.Lib\obj\Debug\BugRobot.Lib.csprojResolveAssemblyReference.cache
 C:\Users\u6038117\Documents\BugRobot-master\src\BugRobot.Lib\obj\Debug\BugRobot.Lib.dll
 C:\Users\u6038117\Documents\BugRobot-master\src\BugRobot.Lib\obj\Debug\BugRobot.Lib.pdb
+C:\Users\u6038117\Documents\GitHub\BugRobot\src\BugRobot.Lib\bin\Debug\BugRobot.Lib.dll
+C:\Users\u6038117\Documents\GitHub\BugRobot\src\BugRobot.Lib\bin\Debug\BugRobot.Lib.pdb
+C:\Users\u6038117\Documents\GitHub\BugRobot\src\BugRobot.Lib\obj\Debug\BugRobot.Lib.csprojResolveAssemblyReference.cache
+C:\Users\u6038117\Documents\GitHub\BugRobot\src\BugRobot.Lib\obj\Debug\BugRobot.Lib.dll
+C:\Users\u6038117\Documents\GitHub\BugRobot\src\BugRobot.Lib\obj\Debug\BugRobot.Lib.pdb
