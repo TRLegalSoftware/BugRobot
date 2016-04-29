@@ -1,0 +1,1 @@
+c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot\obj\Debug\TFSRobot.csprojResolveAssemblyReference.cache

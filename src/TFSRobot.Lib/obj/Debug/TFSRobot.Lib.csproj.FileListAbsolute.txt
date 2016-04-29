@@ -1,0 +1,8 @@
+c:\TFSRobot\bin\TFSRobot.dll
+c:\TFSRobot\bin\TFSRobot.pdb
+c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot\obj\Debug\TFSRobot.Lib.csprojResolveAssemblyReference.cache
+c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot\obj\Debug\TFSRobot.dll
+c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot\obj\Debug\TFSRobot.pdb
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot.Lib\obj\Debug\TFSRobot.Lib.csprojResolveAssemblyReference.cache
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot.Lib\obj\Debug\TFSRobot.dll
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\TFSRobot.Lib\obj\Debug\TFSRobot.pdb

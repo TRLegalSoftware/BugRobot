@@ -1,17 +1,12 @@
-# BugRobot
-> A simple web application who verifies new unassigned bugs on TFS Query.
-
+# TFSRobot
+> A complete rewrite of the BugRobot to work with the TFS
 
 ###### How to run?
 
-1) Publish the project "Bug Robot.Web" in a folder that you want to use;
+Work in progress.
 
-2) Open MS-DOS;
+Don't forget to put:
+Microsoft.WITDataStore32.dll
+Microsoft.WITDataStore64.dll
 
-2) Run the command:
-
-```batch
-"C:\Program Files (x86)\Common Files\microsoft shared\DevServer\11.0\WebDev.WebServer40.EXE" /port:9999 /path:"C:\Temp\BugRobot"
-```
-
-3) Open the address "http://localhost:9999" in your favorite web browser.
+The the bin folder or it won't work
