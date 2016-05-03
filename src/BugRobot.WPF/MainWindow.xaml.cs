@@ -30,7 +30,7 @@ namespace BugRobot.WPF
     {
         //Creates new WorkItemRobots for each function needed
         WorkItemRobot bugRobot, assignToMeRobot;
-        
+
         //Create the log list
         private static ObservableCollection<WorkItemLog> logList;
         private bool isBugRobotRunning = false;
@@ -102,11 +102,19 @@ namespace BugRobot.WPF
 
                 var taskGetBugs = Task.Factory.StartNew(async a =>
                 {
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        bugRobotStateGetBugs.Text = "Connecting.";
+                    }));
                     runBot(bugRobot, runBugsToken, bug =>
                         bug.Type.Name.ToLower() == "bug" &&
                         bug.Fields["BugType"].Value.ToString().ToLower() == "desenvolvimento" &&
                         bug.Fields["Assigned To"].Value.Equals(string.Empty)
                     );
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        bugRobotStateGetBugs.Text = string.Format("Waiting the next {0} seconds.", interval.Text);
+                    }));
                     await Task.Delay(intervalMs, runBugsToken.Token);
                 }, runBugsToken.Token, TaskCreationOptions.LongRunning);
 
@@ -129,7 +137,6 @@ namespace BugRobot.WPF
 
         private void RunWIBotButton(object sender, RoutedEventArgs e)
         {
-            //!username.Text.Equals("")
             if (!username.Text.Equals(""))
             {
                 //If bug robot is not running    
@@ -146,13 +153,14 @@ namespace BugRobot.WPF
             }
             else
             {
-                MessageBox.Show("Username cannot be empty");                
+                MessageBox.Show("Username cannot be empty");
             }
         }
 
         private void startWiBot()
         {
             assignToMeState.Text = "Running";
+            assignToMeStateGetBugs.Text = "Starting...";
             isGetWorkItemsRobotRunning = true;
             try
             {
@@ -163,11 +171,19 @@ namespace BugRobot.WPF
 
                 var taskGetWorkItems = Task.Factory.StartNew(async a =>
                 {
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        assignToMeStateGetBugs.Text = "Connecting.";
+                    }));
                     runBot(assignToMeRobot, getWorkItemsToken, bug =>
                         bug.Type.Name.ToLower() == "bug" &&
                         bug.Fields["BugType"].Value.ToString().ToLower() == "desenvolvimento" &&
                         bug.Fields["Assigned To"].Value.ToString().ToLower().Equals(user.ToLower())
                     );
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        assignToMeStateGetBugs.Text = string.Format("Waiting the next {0} seconds.", interval.Text);
+                    }));
                     await Task.Delay(intervalMs, getWorkItemsToken.Token);
                 }, getWorkItemsToken.Token, TaskCreationOptions.LongRunning);
 
@@ -194,17 +210,27 @@ namespace BugRobot.WPF
 
         private static void runBot(WorkItemRobot robot, CancellationTokenSource cancelToken, Func<WorkItem, bool> filter)
         {
-            //While didn't cancel
-            while (cancelToken.IsCancellationRequested == false)
+            try
             {
-                //Run the bot and gets its list
-                var buglist = robot.Run(filter);
-
-                //Foreach item on that list, add it to the table
-                foreach (var bug in buglist)
+                //While didn't cancel
+                while (cancelToken.IsCancellationRequested == false)
                 {
-                    addToGrid(bug);
+                    //Run the bot and gets its list
+                    var buglist = robot.Run(filter);
+
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        //Foreach item on that list, add it to the table
+                        foreach (var bug in buglist)
+                        {
+                            addToGrid(bug);
+                        }
+                    }));
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
             }
         }
     }

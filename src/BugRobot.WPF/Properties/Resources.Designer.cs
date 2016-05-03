@@ -101,6 +101,26 @@ namespace BugRobot.WPF.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Microsoft_WITDataStore32 {
+            get {
+                object obj = ResourceManager.GetObject("Microsoft_WITDataStore32", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Microsoft_WITDataStore64 {
+            get {
+                object obj = ResourceManager.GetObject("Microsoft_WITDataStore64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap red {
