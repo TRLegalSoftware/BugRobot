@@ -17,14 +17,24 @@ namespace BugRobot.WPF
         public bool isShowingNotification { get; set; }
         public bool isNotificationConfigurated { get; set; }
 
-        public Notification()
+        private NotificationContent lastNotification = new NotificationContent()
         {
-            this.configureNotification();
+            Title = ""
+        };
+
+        public Notification(string imgPath = "")
+        {
+            this.configureNotification(imgPath);
+        }
+
+        public Notification(Bitmap imageFile)
+        {
+            this.configureNotification(imageFile);
         }
 
         public void callNotification(NotificationContent notificationContent, int timeout = 0)
         {
-            if (isNotificationConfigurated)
+            if (isNotificationConfigurated && (lastNotification.Title != notificationContent.Title))
             {
                 //Set notification's title
                 this.notificationSystem.BalloonTipTitle = notificationContent.Title;
@@ -35,7 +45,8 @@ namespace BugRobot.WPF
                     this.notificationSystem.BalloonTipText = notificationContent.Content;
                 } else
                 {
-                    this.notificationSystem.BalloonTipText = "a";
+                    //It must be a space, or the baloon won't work
+                    this.notificationSystem.BalloonTipText = " ";
                 }
 
                 //Set notification's link
@@ -47,10 +58,21 @@ namespace BugRobot.WPF
 
                 //Set notification's timeout
                 this.notificationSystem.ShowBalloonTip(timeout);
+                lastNotification = notificationContent;
             }
         }
 
-        private void configureNotification()
+        private void configureNotification(string imgPath = "")
+        {
+            Bitmap imageFile = null;
+            if (imgPath.Length > 4)
+            {
+                imageFile = new Bitmap(imgPath);
+            }
+            this.configureNotification(imageFile);
+        }
+
+        private void configureNotification(Bitmap imageFile)
         {
             this.notificationSystem = new NotifyIcon();
             this.notificationSystem.Icon = System.Drawing.SystemIcons.Warning;
@@ -58,13 +80,12 @@ namespace BugRobot.WPF
             //Tests if there is really a image path
             //since this class is allways called
             //Passing an icon
-            //if (img.Length > 4)
-            //{
-            //    var bitmap = new Bitmap(img);
-            //    var iconHandle = bitmap.GetHicon();
-            //    var icon = System.Drawing.Icon.FromHandle(iconHandle);
-            //    this.notificationSystem.Icon = icon;
-            //}
+            if (imageFile!=null)
+            {   
+                var iconHandle = imageFile.GetHicon();
+                var icon = System.Drawing.Icon.FromHandle(iconHandle);
+                this.notificationSystem.Icon = icon;
+            }
             this.isNotificationConfigurated = true;
         }
 

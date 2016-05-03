@@ -5,65 +5,83 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BugRobot.WPF"
         mc:Ignorable="d"
-        Title="BugRobot" Height="670" Width="525">
+        Title="BugRobot" Height="580" Width="920">
     <StackPanel Margin="10">
         
         <WrapPanel Orientation="Horizontal">
             <StackPanel>
                 <StackPanel Orientation="Vertical" Margin="5">
                     <Label Content="*Query URL:"></Label>
-                    <TextBox x:Name="query" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" Height="25">
-
-                    </TextBox>
-                    <TextBlock Text="Url of the query that will be listened for new bugs."></TextBlock>
+                    <TextBox x:Name="query" Width="300" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
+                    <TextBlock Text="Url of the query that will be listened for new bugs." ></TextBlock>
                 </StackPanel>
+
 
                 <StackPanel Orientation="Vertical" Margin="5">
                     <Label Content="Username:"></Label>
-                    <TextBox x:Name="username" MinWidth="200" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
-                    <TextBlock Text="Name of the user to assign a new bug automaticaly (optional)." ></TextBlock>
+                    <TextBox x:Name="username" Width="200" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="5">
                     <Label Content="Interval:"></Label>
-                    <TextBox x:Name="interval" Text="" MinWidth="90" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
-                    <TextBlock Text="Interval in seconds to check for new bugs." ></TextBlock>
+                    <TextBox x:Name="interval" Text="" Width="90" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
+                    <TextBlock Text="Interval in seconds to check TFS." ></TextBlock>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <CheckBox x:Name="autoAssign" Content="Auto Assign" ></CheckBox>
-                    <TextBlock Text="Check it if you want the system to automaticaly assign a new bug to the user specified" ></TextBlock>
-                </StackPanel>
+                <GroupBox Header="BugRobot">
+                    <StackPanel>
 
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <CheckBox x:Name="onlyUnassignedBugs" Content="Notify me only unassigned bugs" ></CheckBox>
-                    <TextBlock Text="Check it if you want the system to only show notifications when new bug unassigned arise" ></TextBlock>
-                </StackPanel>
+                        <TextBlock Text="Bug robot shows when there's new bugs" ></TextBlock>                        
 
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <CheckBox x:Name="runOnce" Content="Run once" ></CheckBox>
-                    <TextBlock Text="Runs the bot only one time and doesn't start the timer based on the interval" ></TextBlock>
-                </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <CheckBox x:Name="bugRobotAutoAssign" Content="Auto Assign  (Requires Username)" ></CheckBox>
+                            <TextBlock Text="Check this if you want the system to automaticaly" ></TextBlock>
+                            <TextBlock Text=" assign the new bug to the username specified" ></TextBlock>
+                        </StackPanel>
 
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 10">
-                    <Button x:Name="startButton" Content="Run Bot" MinWidth="90" Click="RunBotButton"/>
-                    <TextBlock x:Name="state" Text="Not running" Margin="10 0 0 0" VerticalAlignment="Center"/>
-                    <TextBlock Text="State:" Margin="10 0 0 0" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="stateGetBugsFromTFS" Text="Stopped" Margin="10 0 0 0" VerticalAlignment="Center"/>
-                </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <CheckBox x:Name="bugRobotRunOnce" Content="Run once" ></CheckBox>
+                            <TextBlock Text="Runs the bot only one time and doesn't start the timer based on the interval" ></TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 10">
+                            <Button x:Name="bugRobotStartButton" Content="Run Bot" Width="90" Click="RunBugRobotButton" HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="bugRobotState" Text="Not running" Margin="10 0 0 0" VerticalAlignment="Center"/>
+                            <TextBlock Text="State:" Margin="10 0 0 0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="bugRobotStateGetBugs" Text="Stopped" Margin="10 0 0 0" VerticalAlignment="Center"/>                            
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Work item search">                    
+                    <StackPanel>
+                        <TextBlock Text="Checks if a new Work Item was assign to the username" ></TextBlock>
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <CheckBox x:Name="assignToMeRunOnce" Content="Run once" ></CheckBox>
+                            <TextBlock Text="Runs the bot only one time and doesn't start the timer based on the interval" ></TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 10">
+                            <Button x:Name="assignToMeStartButton" Content="Run Bot" Width="90" Click="RunWIBotButton" HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="assignToMeState" Text="Not running" Margin="10 0 0 0" VerticalAlignment="Center"/>
+                            <TextBlock Text="State:" Margin="10 0 0 0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="assignToMeStateGetBugs" Text="Stopped" Margin="10 0 0 0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
             </StackPanel>            
             
-            <StackPanel>
-                <ListView MinHeight="60" Name="bugLogsTable" Height="212">
+            <GroupBox Header="Recents">
+                <ListView MinHeight="60" Name="bugLogsTable" Height="490" ItemsSource="{Binding}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Hour" Width="60" DisplayMemberBinding="{Binding Hour}" />
                             <GridViewColumn Header="ID" Width="100" DisplayMemberBinding="{Binding Id}" />
                             <GridViewColumn Header="Title" Width="331" DisplayMemberBinding="{Binding Title}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
-            </StackPanel>
+            </GroupBox>
         </WrapPanel>
 
     </StackPanel>

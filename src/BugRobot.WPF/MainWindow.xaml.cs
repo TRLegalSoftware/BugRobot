@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -25,162 +28,184 @@ namespace BugRobot.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<WorkItemLog> bugLogs;
-        bool isGetBugsRunning = false;
-        WorkItemLog lastResult = new WorkItemLog()
-        {
-            Title = ""
-        };
-
+        //Creates new WorkItemRobots for each function needed
         WorkItemRobot bugRobot, assignToMeRobot;
+        
+        //Create the log list
+        private static ObservableCollection<WorkItemLog> logList;
+        private bool isBugRobotRunning = false;
+        private bool isGetWorkItemsRobotRunning = false;
+        private CancellationTokenSource runBugsToken, getWorkItemsToken;
 
         public MainWindow()
         {
+            logList = new ObservableCollection<WorkItemLog>();
             InitializeComponent();
-            //Create a log list
-            this.bugLogs = new List<WorkItemLog>();
+            this.DataContext = this;
 
             //Set the query text to the default one
             query.Text = "http://plk-tfs2013/tfs/Fabrica_Collection/Fabrica/_workitems#path=Shared+Queries%2FSustenta%C3%A7%C3%A3o+LegalOne%2FRobo+-+Sustenta%C3%A7%C3%A3o+-+Bugs+de+clientes&_a=query&fullScreen=false";
             //Set a default time interval in seconds
-            interval.Text = "5";
+            interval.Text = "60";
 
             //Start a robot only for getting bugs
-            bugRobot = new WorkItemRobot(query.Text, username.Text, autoAssign.IsChecked.Value, new Notification());
+            bugRobot = new WorkItemRobot(
+                //Set the query to find its WorkItems
+                query.Text,
+                //Set the username if want to autoAssign
+                username.Text,
+                //Set if want to autoAssign value
+                bugRobotAutoAssign.IsChecked.Value,
+                //Gives it the notification system
+                new Notification(Properties.Resources.BugIcon)
+            );
 
-            bugLogsTable.ItemsSource = bugLogs;
+            assignToMeRobot = new WorkItemRobot(
+                //Set the query to find its WorkItems
+                query.Text,
+                //Set the username if want to autoAssign
+                username.Text,
+                //Set if want to autoAssign value
+                false,
+                //Gives it the notification system
+                new Notification(Properties.Resources.TFSIcon)
+            );
+
+            //Set the WPF table list to the log list
+            bugLogsTable.ItemsSource = logList;
         }
 
-        private void RunBotButton(object sender, RoutedEventArgs e)
+        private void RunBugRobotButton(object sender, RoutedEventArgs e)
         {
-            //Only starts if its not running
-            if (state.Text.Equals("Not running"))
+            //If bug robot is not running    
+            if (!isBugRobotRunning)
             {
                 startBot();
+                bugRobotStartButton.Content = "Stop Bot";
             }
             else
             {
                 stopBot();
+                bugRobotStartButton.Content = "Run Bot";
             }
         }
 
         private void startBot()
         {
+            bugRobotState.Text = "Running";
+            isBugRobotRunning = true;
             try
             {
-                //Change the state to starting
-                state.Text = "Starting...";
-                stateGetBugsFromTFS.Text = "Waiting...";
-                startButton.Content = "Stop bot";
+                //Start a async task to loop each (interval) seconds
+                runBugsToken = new CancellationTokenSource();
+                var intervalMs = Convert.ToInt32(interval.Text) * 1000;
 
-                Action threadAction = () =>
+                var taskGetBugs = Task.Factory.StartNew(async a =>
                 {
-                    bugRobot.Run(bug =>
+                    runBot(bugRobot, runBugsToken, bug =>
                         bug.Type.Name.ToLower() == "bug" &&
                         bug.Fields["BugType"].Value.ToString().ToLower() == "desenvolvimento" &&
-                        bug.Fields["Assigned To"].Equals(string.Empty)
+                        bug.Fields["Assigned To"].Value.Equals(string.Empty)
                     );
-                };
+                    await Task.Delay(intervalMs, runBugsToken.Token);
+                }, runBugsToken.Token, TaskCreationOptions.LongRunning);
 
-                //CancellationTokenSource _cts = new CancellationTokenSource((int.Parse(interval.Text))*1000);
-
-                var CurrentCulture = Thread.CurrentThread.CurrentCulture;
-                var CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
-
-                var newtask = Task.Factory.StartNew(() =>
-                {
-                    var OldCulture = Thread.CurrentThread.CurrentCulture;
-                    var OldUICulture = Thread.CurrentThread.CurrentUICulture;
-                    Thread.CurrentThread.CurrentCulture = CurrentCulture;
-                    Thread.CurrentThread.CurrentUICulture = CurrentUICulture;
-
-                    try
-                    {
-                        threadAction();
-                    }
-                    finally
-                    {
-                        Thread.CurrentThread.CurrentCulture = OldCulture;
-                        Thread.CurrentThread.CurrentUICulture = OldUICulture;
-                    }
-                });
-
-
-                state.Text = "Running";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
+                bugRobotState.Text = "Failed";
             }
-
         }
 
         private void stopBot()
         {
-            //Stops the timer and then changes the state text
-            //if (timer != null)
-            //{
-            //    timer.Stop();
-            //    timer.Enabled = false;
-            //}
-            //state.Text = "Not running";
-            //stateGetBugsFromTFS.Text = "Stopped";
-            //startButton.Content = "Run bot";
+            runBugsToken.Cancel();
+            bugRobotState.Text = "Not Running";
+            bugRobotStateGetBugs.Text = "Stopped";
+            isBugRobotRunning = false;
         }
 
-        #region deprecated
 
-        //private void GetWorkItems()
-        //{
-        //    Dispatcher.Invoke(new Action(() => {
-        //        this.isGetBugsRunning = true;
-        //        stateGetBugsFromTFS.Text = "Connecting...";
+        private void RunWIBotButton(object sender, RoutedEventArgs e)
+        {
+            //!username.Text.Equals("")
+            if (!username.Text.Equals(""))
+            {
+                //If bug robot is not running    
+                if (!isGetWorkItemsRobotRunning)
+                {
+                    startWiBot();
+                    assignToMeStartButton.Content = "Stop Bot";
+                }
+                else
+                {
+                    stopWiBot();
+                    assignToMeStartButton.Content = "Run Bot";
+                }
+            }
+            else
+            {
+                MessageBox.Show("Username cannot be empty");                
+            }
+        }
 
-        //        WorkItemRobot bugRobot;
+        private void startWiBot()
+        {
+            assignToMeState.Text = "Running";
+            isGetWorkItemsRobotRunning = true;
+            try
+            {
+                //Start a async task to loop each (interval) seconds
+                getWorkItemsToken = new CancellationTokenSource();
+                var intervalMs = Convert.ToInt32(interval.Text) * 1000;
+                var user = username.Text;
 
-        //        //Get the robot
-        //        bugRobot = new WorkItemRobot(query.Text, username.Text, autoAssign.IsChecked.Value, onlyUnassignedBugs.IsChecked.Value);                        
+                var taskGetWorkItems = Task.Factory.StartNew(async a =>
+                {
+                    runBot(assignToMeRobot, getWorkItemsToken, bug =>
+                        bug.Type.Name.ToLower() == "bug" &&
+                        bug.Fields["BugType"].Value.ToString().ToLower() == "desenvolvimento" &&
+                        bug.Fields["Assigned To"].Value.ToString().ToLower().Equals(user.ToLower())
+                    );
+                    await Task.Delay(intervalMs, getWorkItemsToken.Token);
+                }, getWorkItemsToken.Token, TaskCreationOptions.LongRunning);
 
-        //        stateGetBugsFromTFS.Text = "Checking";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
+                assignToMeState.Text = "Failed";
+            }
+        }
 
-        //        //Run it
-        //        WorkItemLog result;
+        private void stopWiBot()
+        {
+            getWorkItemsToken.Cancel();
+            assignToMeState.Text = "Not Running";
+            assignToMeStateGetBugs.Text = "Stopped";
+            isGetWorkItemsRobotRunning = false;
+        }
 
-        //        try
-        //        {
-        //            result = bugRobot.Run();
+        private static void addToGrid(WorkItemLog workItemLog)
+        {
+            logList.Add(workItemLog);
+        }
 
-        //            //If there's something
-        //            if (result.Success && !(lastResult.Title.Equals(result.Title)))
-        //            {
-        //                stateGetBugsFromTFS.Text = "Success!";
-        //                lastResult = result;
+        private static void runBot(WorkItemRobot robot, CancellationTokenSource cancelToken, Func<WorkItem, bool> filter)
+        {
+            //While didn't cancel
+            while (cancelToken.IsCancellationRequested == false)
+            {
+                //Run the bot and gets its list
+                var buglist = robot.Run(filter);
 
-        //                new Notification(result.Icon).callNotification("Bug " + result.Ids, result.Title, result.Url);                    
-
-        //                bugLogs.Add(new WorkItemLog() {
-        //                    Hour = DateTime.Now.ToString("HH:mm:ss"),
-        //                    Id = result.Ids,
-        //                    Title = result.Title
-        //                });
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            stateGetBugsFromTFS.Text = "Failed.";
-        //            MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
-        //        }
-
-
-        //        this.isGetBugsRunning = false;
-        //        stateGetBugsFromTFS.Text = "Waiting...";
-        //        if (runOnce.IsChecked.Value)
-        //        {
-        //            stopBot();
-        //        }
-        //    }), DispatcherPriority.ContextIdle);
-        //}
-
-        #endregion
+                //Foreach item on that list, add it to the table
+                foreach (var bug in buglist)
+                {
+                    addToGrid(bug);
+                }
+            }
+        }
     }
 }

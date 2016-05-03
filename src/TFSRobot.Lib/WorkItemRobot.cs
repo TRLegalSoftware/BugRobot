@@ -15,8 +15,8 @@ namespace TFSRobot
         public string QueryName { get; set; }
         public string UserName { get; set; }
         public bool AutoAssign { get; set; }
+        public bool isRunning { get; set; }
 
-        private bool isRunning;
         private List<WorkItemLog> logList { get; set; }
         private INotification Notification;
 
@@ -86,6 +86,7 @@ namespace TFSRobot
                         }
                     }
 
+
                     //After assign, it'll show a message
                     if (workItems.Count() == 1)
                     {
@@ -98,7 +99,7 @@ namespace TFSRobot
                         var id = wi.Id;
                         var content = wi.Title;
 
-                        this.CallWorkItem(title, url, content, id);
+                        this.CallWorkItem(title, url, content, id, true);
                     }
                     else
                     {
@@ -106,61 +107,97 @@ namespace TFSRobot
 
                         //Get a more generalized title
                         var title = string.Format(
-                            "{0} novos {1} em aberto:\n\n{2}",
+                            "{0} novos {1} em aberto: {2}",
                             //{0}How many
                             workItems.Count(),
                             //{1}Type name
                             workItems.FirstOrDefault().Type.Name,
                             //{2}Its IDs
-                            string.Join("\n", workItems.Select(s => s.Id))
+                            string.Join(", ", workItems.Select(s => s.Id))
                         );
 
-                        this.CallWorkItem(title);
+                        string content;
+
+                        //If the string is too long
+                        if (string.Join("\n", workItems.Select(s => s.Title)).Length > 235)
+                        {
+                            //Shows only the first item and tell how many more items left
+                            content = string.Format("{0}...\n+{1} {2}(s)",
+                                //{0}First item title(cropped)
+                                workItems.FirstOrDefault().Title,
+                                //{1}How many
+                                workItems.Count(),
+                                //{2}Type name
+                                workItems.FirstOrDefault().Type.Name
+                            );
+                        }
+                        else
+                        {
+                            //If it's not too long show everything
+                            content = string.Format(
+                                "{0}",
+                                string.Join("\n", workItems.Select(s => s.Title))
+                            );
+                        }
+
+                        this.CallWorkItem(title, null, content);
+
+                        foreach (WorkItem wi in workItems)
+                        {
+                            addTolist(wi.Title, null, wi.Id, true);
+                        }
                     }
                 }
                 else
                 {
-                    //If there's no bug, there's no need to add it to log list, so it'll only show
-                    //a notification
                     Notification.callNotification(new NotificationContent()
                     {
                         Title = "Nenhum item em aberto"
                     });
                 }
-
-                isRunning = false;
-                
             }
-
+            isRunning = false;
             return logList;
         }
 
-
-        private void CallWorkItem(string workItemTitle, string workItemUrl = null, string workItemContent = null, int? workItemId = null)
+        private void CallWorkItem(string workItemTitle, string workItemUrl = null, string workItemContent = null, int? workItemId = null, bool isToAddList = false)
         {
             //Create a log to add in the history table
-            var wiLog = new WorkItemLog()
-            {
-                Title = workItemTitle
-            };
-
-            if (!string.IsNullOrEmpty(workItemUrl))
-                wiLog.Url = workItemUrl;
-            if (workItemId != null)
-                wiLog.Id = workItemId;
+            var wiLog = addTolist(workItemContent ?? workItemTitle, workItemUrl, workItemId, isToAddList);
 
             var notificationContent = new NotificationContent()
             {
-                Title = wiLog.Title
+                Title = workItemTitle
             };
 
             if (!string.IsNullOrEmpty(wiLog.Url))
                 notificationContent.Url = wiLog.Url;
 
-            //Add to the log list
-            logList.Add(wiLog);
+            if (!string.IsNullOrEmpty(workItemContent))
+                notificationContent.Content = workItemContent;
+
             //Call a notification
             Notification.callNotification(notificationContent);
+        }
+
+        private WorkItemLog addTolist(string logItemTitle, string logItemUrl = null, int? logItemId = null, bool isToAddList = false)
+        {
+            //Create a log to add in the history table
+            var wiLog = new WorkItemLog()
+            {
+                Title = logItemTitle
+            };
+
+            if (!string.IsNullOrEmpty(logItemUrl))
+                wiLog.Url = logItemUrl;
+            if (logItemId != null)
+                wiLog.Id = logItemId;
+
+            if (isToAddList)
+                //Add to the log list
+                logList.Add(wiLog);
+
+            return wiLog;
         }
     }
 }

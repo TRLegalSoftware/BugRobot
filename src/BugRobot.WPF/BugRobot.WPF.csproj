@@ -135,6 +135,27 @@
       <Name>TFSRobot.Lib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BugErrorIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BugIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BugSuccessIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ErrorIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SuccessIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TFSIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
