@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BugRobot.WPF"
         mc:Ignorable="d"
-        Title="BugRobot" Height="580" Width="920">
+        Title="BugRobot" Height="592" Width="920" ResizeMode="CanMinimize" Loaded="Window_Loaded">
     <StackPanel Margin="10">
         
         <WrapPanel Orientation="Horizontal">
             <StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5">
+                <StackPanel Orientation="Vertical" Margin="5">                    
                     <Label Content="*Query URL:"></Label>
                     <TextBox x:Name="query" Width="300" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
                     <TextBlock Text="Url of the query that will be listened for new bugs." ></TextBlock>
@@ -82,6 +82,7 @@
                     </ListView.View>
                 </ListView>
             </GroupBox>
+            <Label x:Name="versionBox" Content="Version: X.X.X.X" FontSize="9" Foreground="#FF7E7E7E"/>
         </WrapPanel>
 
     </StackPanel>

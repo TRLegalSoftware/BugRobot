@@ -1,21 +1,21 @@
-c:\TFSRobot\WPF\bin\Debug\BugRobot.WPF.exe.config
 c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.csprojResolveAssemblyReference.cache
 c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\MainWindow.g.cs
 c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\App.g.cs
-c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF_MarkupCompile.cache
-c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF_MarkupCompile.lref
-c:\TFSRobot\WPF\bin\Debug\BugRobot.WPF.exe
-c:\TFSRobot\WPF\bin\Debug\BugRobot.WPF.pdb
 c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\MainWindow.baml
-c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.g.resources
-c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.Properties.Resources.resources
 c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.csproj.GenerateResource.Cache
-c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.exe
-c:\users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.pdb
-C:\TFSRobot\WPF\bin\Debug\BugRobot.WPF.exe.manifest
-C:\TFSRobot\WPF\bin\Debug\BugRobot.WPF.application
-C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.exe.manifest
-C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF.application
-C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.WPF_Content.g.cs
 C:\TFSRobot\WPF\bin\Debug\Microsoft.WITDataStore32.dll
 C:\TFSRobot\WPF\bin\Debug\Microsoft.WITDataStore64.dll
+C:\TFSRobot\WPF\bin\Debug\BugRobot.exe.config
+C:\TFSRobot\WPF\bin\Debug\BugRobot.exe.manifest
+C:\TFSRobot\WPF\bin\Debug\BugRobot.application
+C:\TFSRobot\WPF\bin\Debug\BugRobot.exe
+C:\TFSRobot\WPF\bin\Debug\BugRobot.pdb
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot_Content.g.cs
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot_MarkupCompile.cache
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot_MarkupCompile.lref
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.g.resources
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.Properties.Resources.resources
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.exe.manifest
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.application
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.exe
+C:\Users\u6038117\documents\visual studio 2015\Projects\TFSRobot\BugRobot.WPF\obj\Debug\BugRobot.pdb

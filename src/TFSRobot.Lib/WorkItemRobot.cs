@@ -19,13 +19,16 @@ namespace TFSRobot
 
         private List<WorkItemLog> logList { get; set; }
         private INotification Notification;
+        private string ContextString;
 
         public WorkItemRobot(
             string queryUrl,
             string userName,
+            string contextString,
             bool autoAssign,
             INotification notificationSystem)
         {
+            this.ContextString = contextString;
             this.isRunning = false;
             this.QueryURL = queryUrl;
             this.UserName = userName;
@@ -94,7 +97,7 @@ namespace TFSRobot
                         var wi = workItems.FirstOrDefault();
                         //If there's only one new bug, show it
                         //Create a log to add in the history table
-                        var title = string.Format("Novo {1} em aberto: {0}", wi.Id, wi.Type.Name);
+                        var title = string.Format("Novo {0} {1}: {2}", wi.Type.Name, ContextString, wi.Id);
                         var url = this.WorkItemTfsManager.GetWorkItemUrl(wi);
                         var id = wi.Id;
                         var content = wi.Title;
@@ -107,12 +110,14 @@ namespace TFSRobot
 
                         //Get a more generalized title
                         var title = string.Format(
-                            "{0} novos {1} em aberto: {2}",
+                            "{0} novos {1} {2}: {3}",
                             //{0}How many
                             workItems.Count(),
                             //{1}Type name
                             workItems.FirstOrDefault().Type.Name,
-                            //{2}Its IDs
+                            //{2}Type name
+                            ContextString,
+                            //{3}Its IDs
                             string.Join(", ", workItems.Select(s => s.Id))
                         );
 
@@ -152,7 +157,7 @@ namespace TFSRobot
                 {
                     Notification.callNotification(new NotificationContent()
                     {
-                        Title = "Nenhum item em aberto"
+                        Title = string.Format("Nenhum item {0}", ContextString)
                     });
                 }
             }
@@ -193,7 +198,7 @@ namespace TFSRobot
             if (logItemId != null)
                 wiLog.Id = logItemId;
 
-            if (isToAddList)
+            if (isToAddList && !logList.Contains(wiLog))
                 //Add to the log list
                 logList.Add(wiLog);
 
