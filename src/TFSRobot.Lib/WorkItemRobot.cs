@@ -14,26 +14,39 @@ namespace TFSRobot
         public string QueryURL { get; set; }
         public string QueryName { get; set; }
         public string UserName { get; set; }
+        public string BotName { get; set; }
         public bool AutoAssign { get; set; }
-        public bool isRunning { get; set; }
+        public bool IsRunning { get; set; }
 
         private List<WorkItemLog> logList { get; set; }
         private INotification Notification;
         private string ContextString;
 
+        /// <summary>
+        /// Creates a new instance of a WorkItemRobot
+        /// </summary>
+        /// <param name="queryUrl">The wanted query to be scanned</param>
+        /// <param name="contextString">A context string to be added to the message</param>
+        /// <param name="notificationSystem">The notification system that'll be used</param>
+        /// <param name="botName">A name, to be added to the log "BotName" column(Optional. Default "WorkItem")</param>
+        /// <param name="userName">The user name(Optional. Default: Null)</param>
+        /// <param name="autoAssign">True if wanted to auto assign the found work item to the username(Optional. Default: False)</param>
         public WorkItemRobot(
             string queryUrl,
-            string userName,
             string contextString,
-            bool autoAssign,
-            INotification notificationSystem)
+            INotification notificationSystem,
+            string botName = "WorkItem",
+            string userName = null,
+            bool autoAssign = false)
         {
-            this.ContextString = contextString;
-            this.isRunning = false;
+            this.IsRunning = false;
             this.QueryURL = queryUrl;
+            this.ContextString = contextString;
+            this.Notification = notificationSystem;
+            this.BotName = botName;
             this.UserName = userName;
             this.AutoAssign = autoAssign;
-            this.Notification = notificationSystem;
+            
             logList = new List<WorkItemLog>();
 
             #region Preparing query and items names to give it to TFS
@@ -60,9 +73,9 @@ namespace TFSRobot
 
         public IEnumerable<WorkItemLog> Run(Func<WorkItem, bool> filter)
         {
-            if (!isRunning)
+            if (!IsRunning)
             {
-                isRunning = true;
+                IsRunning = true;
                 var workItems = this.WorkItemTfsManager.GetWorkItems(this.QueryName, filter);
 
                 //If returned workItems
@@ -114,7 +127,7 @@ namespace TFSRobot
                             //{0}How many
                             workItems.Count(),
                             //{1}Type name
-                            workItems.FirstOrDefault().Type.Name,
+                            workItems.LastOrDefault().Type.Name,
                             //{2}Type name
                             ContextString,
                             //{3}Its IDs
@@ -129,11 +142,11 @@ namespace TFSRobot
                             //Shows only the first item and tell how many more items left
                             content = string.Format("{0}...\n+{1} {2}(s)",
                                 //{0}First item title(cropped)
-                                workItems.FirstOrDefault().Title,
+                                workItems.LastOrDefault().Title,
                                 //{1}How many
-                                workItems.Count(),
+                                workItems.Count()-1,
                                 //{2}Type name
-                                workItems.FirstOrDefault().Type.Name
+                                workItems.LastOrDefault().Type.Name
                             );
                         }
                         else
@@ -161,7 +174,7 @@ namespace TFSRobot
                     });
                 }
             }
-            isRunning = false;
+            IsRunning = false;
             return logList;
         }
 
@@ -190,6 +203,7 @@ namespace TFSRobot
             //Create a log to add in the history table
             var wiLog = new WorkItemLog()
             {
+                BotName = BotName,
                 Title = logItemTitle
             };
 

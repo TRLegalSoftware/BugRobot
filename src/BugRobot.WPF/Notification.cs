@@ -12,29 +12,36 @@ namespace BugRobot.WPF
     public class Notification : INotification
     {
         private string currentUrl { get; set; }
-        private NotifyIcon notificationSystem;
 
+        public NotifyIcon notificationSystem;
         public bool isShowingNotification { get; set; }
         public bool isNotificationConfigurated { get; set; }
+
+        private Queue<NotificationContent> recentNotifications;
 
         private NotificationContent lastNotification = new NotificationContent()
         {
             Title = ""
         };
 
-        public Notification(string imgPath = "")
+        public Notification()
         {
+            recentNotifications = new Queue<NotificationContent>();
+        }
+
+        public Notification(string imgPath = "") : this()
+        {            
             this.configureNotification(imgPath);
         }
 
-        public Notification(Bitmap imageFile)
+        public Notification(Bitmap imageFile) : this()
         {
             this.configureNotification(imageFile);
         }
 
         public void callNotification(NotificationContent notificationContent, int timeout = 0)
         {
-            if (isNotificationConfigurated && (lastNotification.Title != notificationContent.Title))
+            if (isNotificationConfigurated && (!recentNotifications.Any(n => n.Title == notificationContent.Title)))
             {
                 //Set notification's title
                 this.notificationSystem.BalloonTipTitle = notificationContent.Title;
@@ -58,7 +65,9 @@ namespace BugRobot.WPF
 
                 //Set notification's timeout
                 this.notificationSystem.ShowBalloonTip(timeout);
-                lastNotification = notificationContent;
+
+                recentNotifications.Enqueue(notificationContent);
+                if (recentNotifications.Count > 3) recentNotifications.Dequeue();
             }
         }
 
@@ -86,6 +95,13 @@ namespace BugRobot.WPF
                 var icon = System.Drawing.Icon.FromHandle(iconHandle);
                 this.notificationSystem.Icon = icon;
             }
+
+            this.notificationSystem.Click += delegate (object sender, EventArgs args)
+            {
+                //This must be here to fix a bug when you click the icon once when there's a baloon
+                //It was opening lots of tabs
+            };
+
             this.isNotificationConfigurated = true;
         }
 

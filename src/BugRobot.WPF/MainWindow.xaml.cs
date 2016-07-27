@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
+using System.Deployment.Application;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,26 +34,70 @@ namespace BugRobot.WPF
 
         //Create the log list
         private static ObservableCollection<WorkItemLog> logList;
+        private static List<WorkItemLog> oldList;
         private bool isBugRobotRunning = false;
         private bool isGetWorkItemsRobotRunning = false;
         private CancellationTokenSource runBugsToken, getWorkItemsToken;
+        private Notification notify { get; set; }
 
         public MainWindow()
         {
             logList = new ObservableCollection<WorkItemLog>();
+            oldList = new List<WorkItemLog>();
             InitializeComponent();
+
+            notify = new Notification(Properties.Resources.BugIcon);
+
+            notify.notificationSystem.DoubleClick += delegate (object sender, EventArgs args)
+            {
+                maximizeWindow();
+            };
+
+            //First instatiate the menu for the right click action
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+
+            //Creates a menu item to insert on menu
+            var rightClickCloseMenuItem = new System.Windows.Forms.MenuItem();
+            rightClickCloseMenuItem.Index = 1;
+            rightClickCloseMenuItem.Text = "Close";
+            rightClickCloseMenuItem.Click += menuItemClose_Click;
+
+            var maximizeMenuItem = new System.Windows.Forms.MenuItem();
+            maximizeMenuItem.Index = 0;
+            maximizeMenuItem.Text = "Maximize";
+            maximizeMenuItem.Click += menuItemMaximize_Click;
+
+            var updateMenuItem = new System.Windows.Forms.MenuItem();
+            updateMenuItem.Index = 2;
+            updateMenuItem.Text = "Check for updates";
+            updateMenuItem.Click += menuItemUpdate_Click;
+
+            contextMenu.MenuItems.Add(updateMenuItem);
+            contextMenu.MenuItems.Add(maximizeMenuItem);
+            contextMenu.MenuItems.Add(rightClickCloseMenuItem);
+
+            //Set the menu to the right click action
+            notify.notificationSystem.ContextMenu = contextMenu;
+
         }
 
         private void RunBugRobotButton(object sender, RoutedEventArgs e)
         {
-            //If bug robot is not running    
-            if (!isBugRobotRunning)
+            if (username.Text.Equals("") && bugRobotAutoAssign.IsChecked.Value)
             {
-                startBot();
+                MessageBox.Show("Username cannot be empty because you want to Auto Assign to a user");
             }
             else
-            {
-                stopBot();
+            {   
+                //If bug robot is not running    
+                if (!isBugRobotRunning)
+                {
+                    startBot();
+                }
+                else
+                {
+                    stopBot();
+                }
             }
         }
 
@@ -196,7 +240,8 @@ namespace BugRobot.WPF
 
         private static void addToGrid(WorkItemLog workItemLog)
         {
-            if (!logList.Any(l => l.Id == workItemLog.Id))
+            //Just add to list if this bug wasn't a recent bug and wasn't cleared before
+            if (!logList.Any(l => l.Id == workItemLog.Id) && !oldList.Any(l => l.Id == workItemLog.Id))
             {
                 logList.Add(workItemLog);
             }
@@ -225,7 +270,8 @@ namespace BugRobot.WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
+                if (!ex.Message.Equals("A task was canceled."))
+                    MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
             }
         }
 
@@ -245,14 +291,22 @@ namespace BugRobot.WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
+                if (!ex.Message.Equals("A task was canceled."))
+                    MessageBox.Show("Erro:\n\n" + ex.Message + "\n\nDetalhes:\n" + ex.InnerException);
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var vers = Assembly.GetExecutingAssembly().GetName().Version;
-            versionBox.Content = string.Format("Version: {0}.{1}.{2}.{3}", vers.Major, vers.Minor, vers.Build, vers.Revision);
+            //If you're debugging, there's not a current version to get and it throws a exception
+            try
+            {
+                versionBox.Content = string.Format("Version: {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString());
+            }
+            catch (Exception ex)
+            {
+                versionBox.Content = "Version: Debug";
+            }
             this.DataContext = this;
 
             //Set the query text to the default one
@@ -264,30 +318,190 @@ namespace BugRobot.WPF
             bugRobot = new WorkItemRobot(
                 //Set the query to find its WorkItems
                 query.Text,
-                //Set the username if want to autoAssign
-                username.Text,
                 //Context string
                 "em aberto",
-                //Set if want to autoAssign value
-                bugRobotAutoAssign.IsChecked.Value,
                 //Gives it the notification system
-                new Notification(Properties.Resources.BugIcon)
+                notify,
+                //Set the bot name
+                "Bug",
+                //Set the username if want to autoAssign
+                username.Text,
+                //Set if want to autoAssign value
+                bugRobotAutoAssign.IsChecked.Value
             );
 
+            //Start a robot only for getting bugs
             assignToMeRobot = new WorkItemRobot(
                 //Set the query to find its WorkItems
                 query.Text,
-                //Set the username if want to autoAssign
-                username.Text,
+                //Context string
                 "adicionado(s) ao meu nome",
-                //Set if want to autoAssign value
-                false,
                 //Gives it the notification system
-                new Notification(Properties.Resources.TFSIcon)
+                notify,
+                //Set the bot name
+                "Add"
             );
 
             //Set the WPF table list to the log list
             bugLogsTable.ItemsSource = logList;
+
+            //This is called to check for updates every 2 hours
+            Task.Factory.StartNew(new Action(async () =>
+            {
+                while (true)
+                {
+                    //Check for updates
+                    InstallUpdateSyncWithInfo();
+                    //Check for updates each 2 hours
+                    await Task.Delay((60000 * (60 * 2)));
+                }
+            }), TaskCreationOptions.LongRunning);
         }
+
+        //If the state of the ENTIRE window has changed
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == System.Windows.WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
+        }
+
+        //Menu "CLOSE" click
+        private void menuItemClose_Click(object Sender, EventArgs e)
+        {
+            // Close the form, which closes the application.
+            Application.Current.Shutdown();
+        }
+
+        //Handle the double click on a listItem
+        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as ListViewItem;
+            if (item != null && item.IsSelected)
+            {
+                try
+                {
+                    var clickedItem = ((TFSRobot.WorkItemLog)item.Content).Url;
+                    if (clickedItem != null)
+                        System.Diagnostics.Process.Start(clickedItem);
+                }
+                catch (System.ComponentModel.Win32Exception ex)
+                {
+                    if (ex.ErrorCode == -2147467259)
+                        MessageBox.Show(ex.Message);
+                }
+                catch (System.Exception other)
+                {
+                    MessageBox.Show(other.Message);
+                }
+            }
+        }
+
+        private void clean_Click(object sender, RoutedEventArgs e)
+        {
+            oldList.AddRange(logList);
+            logList.Clear();
+        }
+
+        //Menu "Maximize" click
+        private void menuItemMaximize_Click(object Sender, EventArgs e)
+        {
+            // Close the form, which closes the application.
+            maximizeWindow();
+        }
+
+        //Menu "CLOSE" click
+        private void menuItemUpdate_Click(object Sender, EventArgs e)
+        {
+            // Call the uptade function
+            InstallUpdateSyncWithInfo();
+        }
+
+        //Maximize window function
+        private void maximizeWindow()
+        {
+            this.Show();
+            this.WindowState = WindowState.Normal;
+        }
+
+        //This checks for updates
+        private void InstallUpdateSyncWithInfo()
+        {
+            UpdateCheckInfo info = null;
+
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+
+                try
+                {
+                    info = ad.CheckForDetailedUpdate();
+
+                }
+                catch (DeploymentDownloadException dde)
+                {
+                    MessageBox.Show("The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
+                    return;
+                }
+                catch (InvalidDeploymentException ide)
+                {
+                    MessageBox.Show("Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
+                    return;
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    MessageBox.Show("This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unknown error: " + ex.Message);
+                    return;
+                }
+
+                if (info.UpdateAvailable)
+                {
+                    Boolean doUpdate = true;
+
+                    if (!info.IsUpdateRequired)
+                    {
+                        var messageResult = MessageBox.Show("An update is available. Would you like to update the application now?", "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+                        if (messageResult.Equals(MessageBoxResult.No))
+                        {
+                            doUpdate = false;
+                        }
+                    }
+                    else
+                    {
+                        // Display a message that the app MUST reboot. Display the minimum required version.
+                        MessageBox.Show("This application has detected a mandatory update from your current " +
+                            "version to version " + info.MinimumRequiredVersion.ToString() +
+                            ". The application will now install the update and restart.",
+                            "Update Available", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+
+                    if (doUpdate)
+                    {
+                        try
+                        {
+                            ad.Update();
+                            MessageBox.Show("The application has been upgraded, and will now restart.");
+
+                            System.Windows.Forms.Application.Restart();
+                            Application.Current.Shutdown();
+                        }
+                        catch (DeploymentDownloadException dde)
+                        {
+                            MessageBox.Show("Cannot install the latest version of the application. \n\nPlease check your network connection, or try again later. Error: " + dde);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

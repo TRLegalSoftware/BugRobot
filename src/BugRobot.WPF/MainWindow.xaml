@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BugRobot.WPF"
         mc:Ignorable="d"
-        Title="BugRobot" Height="592" Width="920" ResizeMode="CanMinimize" Loaded="Window_Loaded">
+        Title="BugRobot" Height="1000" Width="1000" ResizeMode="CanMinimize" Loaded="Window_Loaded">
     <StackPanel Margin="10">
         
         <WrapPanel Orientation="Horizontal">
             <StackPanel>
                 <StackPanel Orientation="Vertical" Margin="5">                    
-                    <Label Content="*Query URL:"></Label>
-                    <TextBox x:Name="query" Width="300" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
+                    <Label Content="*Query URL(Read Only):"></Label>
+                    <TextBox IsReadOnly="True" x:Name="query" Width="300" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
                     <TextBlock Text="Url of the query that will be listened for new bugs." ></TextBlock>
                 </StackPanel>
 
@@ -20,8 +20,10 @@
                 <StackPanel Orientation="Vertical" Margin="5">
                     <Label Content="Username:"></Label>
                     <TextBox x:Name="username" Width="200" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
+                    <TextBlock Text="Display name from TFS" ></TextBlock>
                 </StackPanel>
 
+                
                 <StackPanel Orientation="Vertical" Margin="5">
                     <Label Content="Interval:"></Label>
                     <TextBox x:Name="interval" Text="" Width="90" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25"></TextBox>
@@ -31,7 +33,12 @@
                 <GroupBox Header="BugRobot">
                     <StackPanel>
 
-                        <TextBlock Text="Bug robot shows when there's new bugs" ></TextBlock>                        
+                        <TextBlock Text="Bug robot shows when there's new bugs" ></TextBlock>
+
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <CheckBox x:Name="bugRobotOnlyNext" Content="Only NOVAJUS" Margin="10 0"></CheckBox>
+                            <CheckBox x:Name="bugRobotOnlyNovajus" Content="Only NEXT_LEGALONE" Margin="10 0"></CheckBox>
+                        </StackPanel>
 
                         <StackPanel Orientation="Vertical" Margin="5">
                             <CheckBox x:Name="bugRobotAutoAssign" Content="Auto Assign  (Requires Username)" ></CheckBox>
@@ -55,7 +62,7 @@
 
                 <GroupBox Header="Work item search">                    
                     <StackPanel>
-                        <TextBlock Text="Checks if a new Work Item was assign to the username" ></TextBlock>
+                        <TextBlock Text="Checks if a new Work Item was assigned to the username" ></TextBlock>
                         <StackPanel Orientation="Vertical" Margin="5">
                             <CheckBox x:Name="assignToMeRunOnce" Content="Run once" ></CheckBox>
                             <TextBlock Text="Runs the bot only one time and doesn't start the timer based on the interval" ></TextBlock>
@@ -73,16 +80,32 @@
             </StackPanel>            
             
             <GroupBox Header="Recents">
-                <ListView MinHeight="60" Name="bugLogsTable" Height="490" ItemsSource="{Binding}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="ID" Width="100" DisplayMemberBinding="{Binding Id}" />
-                            <GridViewColumn Header="Title" Width="331" DisplayMemberBinding="{Binding Title}" />
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <StackPanel>
+                    <StackPanel>
+                        <ListView MinHeight="60" Name="bugLogsTable" Height="476" ItemsSource="{Binding}" Width="436">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Bot" Width="60" DisplayMemberBinding="{Binding BotName}" />
+                                    <GridViewColumn Header="ID" Width="60" DisplayMemberBinding="{Binding Id}" />
+                                    <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}" />
+                                    <GridViewColumn Header="Url" Width="Auto" DisplayMemberBinding="{Binding Url}" />
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                    </StackPanel>
+
+                    <StackPanel Margin="5">
+                        <Button x:Name="clean" Content="Clean" Width="90" Click="clean_Click" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                    
+                </StackPanel>
             </GroupBox>
-            <Label x:Name="versionBox" Content="Version: X.X.X.X" FontSize="9" Foreground="#FF7E7E7E"/>
+            <Label x:Name="versionBox" Content="Version: Debug" FontSize="9" Foreground="#FF7E7E7E"/>
         </WrapPanel>
 
     </StackPanel>
